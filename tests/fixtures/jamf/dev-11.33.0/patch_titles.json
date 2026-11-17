@@ -1,0 +1,157 @@
+{
+ "_source": "GET /api/v2/patch-software-title-configurations on jamf-test.example.com, Jamf Pro 11.33.0-t1790886091046, 2026-11-09; filtered to the apps in packages.example.json",
+ "results": [
+  {
+   "categoryId": "56",
+   "displayName": "Zoom Client for Meetings",
+   "emailNotifications": false,
+   "extensionAttributes": [],
+   "id": "3",
+   "jamfOfficial": true,
+   "packages": [],
+   "patchSourceEnabled": true,
+   "patchSourceName": "Jamf",
+   "siteId": "-1",
+   "softwareTitleId": "3",
+   "softwareTitleName": "Zoom Client for Meetings",
+   "softwareTitleNameId": "0F9",
+   "softwareTitlePublisher": "Zoom Video Communications",
+   "uiNotifications": true
+  },
+  {
+   "categoryId": "21",
+   "displayName": "Google Drive File Stream",
+   "emailNotifications": false,
+   "extensionAttributes": [
+    {
+     "accepted": false,
+     "eaId": "jamf-patch-google-drive-file-stream"
+    }
+   ],
+   "id": "32",
+   "jamfOfficial": true,
+   "packages": [],
+   "patchSourceEnabled": true,
+   "patchSourceName": "Jamf",
+   "siteId": "-1",
+   "softwareTitleId": "32",
+   "softwareTitleName": "Google Drive",
+   "softwareTitleNameId": "157",
+   "softwareTitlePublisher": "Google",
+   "uiNotifications": true
+  },
+  {
+   "categoryId": "56",
+   "displayName": "Adobe Acrobat DC Continuous",
+   "emailNotifications": false,
+   "extensionAttributes": [],
+   "id": "47",
+   "jamfOfficial": true,
+   "packages": [],
+   "patchSourceEnabled": true,
+   "patchSourceName": "Jamf",
+   "siteId": "-1",
+   "softwareTitleId": "47",
+   "softwareTitleName": "Adobe Acrobat DC Continuous",
+   "softwareTitleNameId": "029",
+   "softwareTitlePublisher": "Adobe",
+   "uiNotifications": true
+  },
+  {
+   "categoryId": "43",
+   "displayName": "Microsoft Word 365/2019",
+   "emailNotifications": false,
+   "extensionAttributes": [],
+   "id": "51",
+   "jamfOfficial": true,
+   "packages": [],
+   "patchSourceEnabled": true,
+   "patchSourceName": "Jamf",
+   "siteId": "-1",
+   "softwareTitleId": "51",
+   "softwareTitleName": "Microsoft Word 365",
+   "softwareTitleNameId": "0A6",
+   "softwareTitlePublisher": "Microsoft",
+   "uiNotifications": true
+  },
+  {
+   "categoryId": "9",
+   "displayName": "swiftDialog",
+   "emailNotifications": false,
+   "extensionAttributes": [
+    {
+     "accepted": false,
+     "eaId": "jamf-patch-swiftdialog"
+    }
+   ],
+   "id": "54",
+   "jamfOfficial": true,
+   "packages": [],
+   "patchSourceEnabled": true,
+   "patchSourceName": "Jamf",
+   "siteId": "-1",
+   "softwareTitleId": "55",
+   "softwareTitleName": "swiftDialog",
+   "softwareTitleNameId": "550",
+   "softwareTitlePublisher": "Bart Reardon",
+   "uiNotifications": true
+  },
+  {
+   "categoryId": "56",
+   "displayName": "Nudge",
+   "emailNotifications": false,
+   "extensionAttributes": [],
+   "id": "72",
+   "jamfOfficial": true,
+   "packages": [
+    {
+     "displayName": "Nudge_Suite-2.1.2.81856.pkg",
+     "packageId": "200",
+     "version": "2.1.2.81856"
+    }
+   ],
+   "patchSourceEnabled": true,
+   "patchSourceName": "Jamf",
+   "siteId": "-1",
+   "softwareTitleId": "72",
+   "softwareTitleName": "Nudge",
+   "softwareTitleNameId": "4E3",
+   "softwareTitlePublisher": "MacAdmins",
+   "uiNotifications": true
+  },
+  {
+   "categoryId": "21",
+   "displayName": "Google Chrome",
+   "emailNotifications": false,
+   "extensionAttributes": [],
+   "id": "80",
+   "jamfOfficial": true,
+   "packages": [],
+   "patchSourceEnabled": true,
+   "patchSourceName": "Jamf",
+   "siteId": "-1",
+   "softwareTitleId": "79",
+   "softwareTitleName": "Google Chrome",
+   "softwareTitleNameId": "0BC",
+   "softwareTitlePublisher": "Google",
+   "uiNotifications": true
+  },
+  {
+   "categoryId": "44",
+   "displayName": "Example Sensor",
+   "emailNotifications": false,
+   "extensionAttributes": [],
+   "id": "84",
+   "jamfOfficial": true,
+   "packages": [],
+   "patchSourceEnabled": true,
+   "patchSourceName": "Jamf",
+   "siteId": "-1",
+   "softwareTitleId": "84",
+   "softwareTitleName": "Example Sensor",
+   "softwareTitleNameId": "65E",
+   "softwareTitlePublisher": "Example Vendor",
+   "uiNotifications": true
+  }
+ ]
+}

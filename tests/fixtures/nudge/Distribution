@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<installer-gui-script minSpecVersion="1">
+    <pkg-ref id="com.github.macadmins.Nudge.Suite">
+        <bundle-version>
+            <bundle CFBundleShortVersionString="2.1.4.81863" CFBundleVersion="2.1.4.81863" id="com.github.macadmins.Nudge" path="Applications/Utilities/Nudge.app"/>
+        </bundle-version>
+    </pkg-ref>
+    <options customize="never" require-scripts="false" hostArchitectures="x86_64,arm64"/>
+    <choices-outline>
+        <line choice="default">
+            <line choice="com.github.macadmins.Nudge.Suite"/>
+        </line>
+    </choices-outline>
+    <choice id="default"/>
+    <choice id="com.github.macadmins.Nudge.Suite" visible="false">
+        <pkg-ref id="com.github.macadmins.Nudge.Suite"/>
+    </choice>
+    <pkg-ref id="com.github.macadmins.Nudge.Suite" version="2.1.4.81863" onConclusion="none" installKBytes="4338" updateKBytes="0">#Nudge_Suite-2.1.4.81863.pkg</pkg-ref>
+    <product id="com.github.macadmins.Nudge.Suite" version="2.1.4.81863"/>
+</installer-gui-script>

@@ -1,0 +1,26 @@
+name: tests
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  el8-python36:
+    # The deployment target: Rocky Linux 8 with its platform Python 3.6.
+    runs-on: ubuntu-latest
+    container: rockylinux:8
+    steps:
+      - run: dnf -y -q install python3 openssl make git util-linux
+      - uses: actions/checkout@v4
+      - run: python3 --version
+      # As an ordinary user, like the real service user: as root, permission tests cannot fail.
+      - run: |
+          useradd -m tester
+          chown -R tester "$GITHUB_WORKSPACE"
+          runuser -u tester -- make -C "$GITHUB_WORKSPACE" test-unit test-int PYTHON=python3
+  current-python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: make test-unit test-int leak-check

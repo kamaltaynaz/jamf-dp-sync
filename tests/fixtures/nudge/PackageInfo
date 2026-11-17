@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<pkg-info postinstall-action="none" preserve-xattr="false" format-version="2" identifier="com.github.macadmins.Nudge.Suite" version="2.1.4.81863" generator-version="InstallCmds-864.12 (25G83)" install-location="/" auth="root">
+    <payload numberOfFiles="67" installKBytes="4338"/>
+    <bundle path="./Applications/Utilities/Nudge.app" id="com.github.macadmins.Nudge" CFBundleShortVersionString="2.1.4.81863" CFBundleVersion="2.1.4.81863"/>
+    <bundle-version>
+        <bundle id="com.github.macadmins.Nudge"/>
+    </bundle-version>
+    <upgrade-bundle>
+        <bundle id="com.github.macadmins.Nudge"/>
+    </upgrade-bundle>
+    <update-bundle/>
+    <atomic-update-bundle/>
+    <strict-identifier>
+        <bundle id="com.github.macadmins.Nudge"/>
+    </strict-identifier>
+    <relocate/>
+    <scripts>
+        <postinstall file="./postinstall" timeout="600"/>
+    </scripts>
+</pkg-info>

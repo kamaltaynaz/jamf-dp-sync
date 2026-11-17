@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC: hand-built from the documented Classic API policy schema. Replace with a recorded
+     GET /JSSResource/policies/id/{id} of a TEST- policy during L2. -->
+<policy>
+  <general>
+    <id>101</id>
+    <name>Install Nudge (JSM)</name>
+    <enabled>true</enabled>
+    <trigger>EVENT</trigger>
+    <trigger_other>install-nudge-jsm</trigger_other>
+    <frequency>Ongoing</frequency>
+    <category><id>-1</id><name>No category assigned</name></category>
+  </general>
+  <scope>
+    <all_computers>true</all_computers>
+    <computers/>
+    <computer_groups/>
+  </scope>
+  <self_service>
+    <use_for_self_service>false</use_for_self_service>
+  </self_service>
+  <package_configuration>
+    <packages>
+      <size>3</size>
+      <package>
+        <id>11</id>
+        <name>Org-Branding-1.2.pkg</name>
+        <action>Cache</action>
+        <fut>false</fut>
+        <feu>false</feu>
+        <update_autorun>false</update_autorun>
+      </package>
+      <package>
+        <id>42</id>
+        <name>Nudge_Suite-2.1.3.81500.pkg</name>
+        <action>Install</action>
+        <fut>false</fut>
+        <feu>true</feu>
+        <update_autorun>false</update_autorun>
+      </package>
+      <package>
+        <id>57</id>
+        <name>Nudge-Profile-Helper.pkg</name>
+        <action>Install</action>
+        <fut>false</fut>
+        <feu>false</feu>
+        <update_autorun>false</update_autorun>
+      </package>
+    </packages>
+    <distribution_point>default</distribution_point>
+  </package_configuration>
+  <scripts><size>0</size></scripts>
+</policy>

@@ -1,0 +1,125 @@
+{
+  "dp_packages_dir": "/srv/jamf/Packages",
+  "staging_dir": "/srv/jamf-dp-sync-staging",
+  "category_id": -1,
+  "retain": 2,
+  "alert_after_days": 3,
+  "log_file": "~/logs/jamf-dp-sync.log",
+  "lock_file": "~/.local/state/jamf-dp-sync/run.lock",
+  "tools": {
+    "openssl": "/usr/bin/openssl",
+    "7zz": "~/bin/7zz"
+  },
+  "apps": [
+    {
+      "label": "nudge",
+      "mode": "sync",
+      "resolver": "github_tag",
+      "repo": "macadmins/nudge",
+      "asset_regex": "^Nudge_Suite-[0-9.]+\\.pkg$",
+      "name_prefix": "jds-NudgeSuite",
+      "team_id": "T4SK8ZXCXG",
+      "patch_title_id": 208,
+      "version_rule": "dotted",
+      "policy_ids": [
+        101
+      ],
+      "replace_regex": "^Nudge_Suite-.+\\.pkg$",
+      "add_if_missing": true
+    },
+    {
+      "label": "dialog",
+      "mode": "sync",
+      "resolver": "github_tag",
+      "repo": "swiftDialog/swiftDialog",
+      "asset_regex": "^dialog-[0-9.]+-[0-9]+\\.pkg$",
+      "name_prefix": "jds-swiftDialog",
+      "team_id": "PWA5E9TQ59",
+      "patch_title_id": 209,
+      "version_rule": "swiftdialog",
+      "policy_ids": [
+        102
+      ],
+      "replace_regex": "^dialog-[0-9.]+-[0-9]+\\.pkg$",
+      "add_if_missing": true
+    },
+    {
+      "label": "acrobat",
+      "mode": "sync",
+      "resolver": "adobe_arm_manifest",
+      "manifest_url": "https://armmf.adobe.com/arm-manifests/mac/AcrobatDC/acrobat/AcrobatManifest.arm",
+      "item_id": "dld_App_Full",
+      "name_prefix": "jds-AdobeAcrobatPro",
+      "team_id": "JQ525L2MZD",
+      "patch_title_id": 201,
+      "version_rule": "acrobat",
+      "policy_ids": [
+        103
+      ],
+      "add_if_missing": true
+    },
+    {
+      "label": "office",
+      "mode": "sync",
+      "resolver": "latest_redirect",
+      "url": "https://go.microsoft.com/fwlink/?linkid=525133",
+      "name_prefix": "jds-Microsoft365",
+      "team_id": "UBF8T346G9",
+      "patch_title_id": 202,
+      "version_rule": "office",
+      "policy_ids": [
+        104
+      ],
+      "add_if_missing": true
+    },
+    {
+      "label": "chrome",
+      "mode": "sync",
+      "resolver": "latest_redirect",
+      "url": "https://dl.google.com/dl/chrome/mac/universal/stable/gcem/GoogleChrome.pkg",
+      "name_prefix": "jds-GoogleChrome",
+      "team_id": "EQHXZ8M8AV",
+      "patch_title_id": 203,
+      "version_rule": "dotted",
+      "policy_ids": [
+        105
+      ],
+      "replace_regex": "^GoogleChrome-.+\\.pkg$",
+      "add_if_missing": true
+    },
+    {
+      "label": "zoom",
+      "mode": "sync",
+      "resolver": "url_template",
+      "url_template": "https://cdn.zoom.us/prod/{version}/ZoomInstallerIT.pkg",
+      "name_prefix": "jds-ZoomWorkplace",
+      "team_id": "BJ4HAAB9B3",
+      "patch_title_id": 204,
+      "version_rule": "zoom",
+      "policy_ids": [
+        106
+      ],
+      "add_if_missing": true
+    },
+    {
+      "label": "vpnclient",
+      "mode": "monitor",
+      "patch_title_id": 206,
+      "version_rule": "dotted",
+      "policy_ids": [
+        108
+      ],
+      "replace_regex": "^example-vpn-client-macos-(?P<version>[0-9.]+)-core-vpn-webdeploy-k9\\.pkg$"
+    },
+    {
+      "label": "sensor",
+      "mode": "monitor",
+      "patch_title_id": 207,
+      "version_rule": "dotted",
+      "policy_ids": [
+        109
+      ],
+      "replace_regex": "^ExampleSensorMacOS_(?P<version>[0-9.]+)\\.pkg$"
+    }
+  ]
+}

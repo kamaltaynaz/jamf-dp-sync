@@ -1,0 +1,17 @@
+{
+  "label": "googledrive",
+  "mode": "sync",
+  "resolver": "latest_redirect",
+  "url": "https://dl.google.com/drive-file-stream/GoogleDrive.dmg",
+  "post_download": {
+    "type": "dmg_extract",
+    "inner_path_regex": "(^|/)GoogleDrive\\.pkg$"
+  },
+  "name_prefix": "jds-GoogleDrive",
+  "team_id": "EQHXZ8M8AV",
+  "patch_title_id": 205,
+  "version_rule": "dotted",
+  "policy_ids": [
+    107
+  ]
+}

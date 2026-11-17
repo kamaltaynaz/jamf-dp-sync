@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ARMProductManifest version="1.1">
+    <CustomInfoItems>
+        <CustomValue id="FAILED_INCR" plistFilePath="/Library/Application Support/Adobe/Acrobat/DC/Preferences/incrPatch.plist" type="Number" keyName="PatchApplied" customInfoValue="1" />
+        <CustomValue id="FAILED_CUMU" plistFilePath="/Library/Application Support/Adobe/Acrobat/DC/Preferences/cumuPatch.plist" type="Number" keyName="PatchApplied" customInfoValue="1" />
+        <CustomValue id="migration__acrobat_sca_full" plistFilePath="~/Library/Application Support/Adobe/ARMMigration/com.adobe.acrobat.dc.plist" type="Number" keyName="MigrationStatus" customInfoValue="0" />
+    </CustomInfoItems>
+    <ActionMatrix>
+        <Case order="1" OS="26.4,26.5.9" language="MUL" version="15.7.20033,26.3.22074" actionItemList="dld_App_Full,exe_cmd_App_Full" />
+        <Case order="2" OS="13.0," language="MUL" version="15.7.20033,26.3.22075" maxRetryCount="10" customInfoID="migration__acrobat_sca_full" actionItemList="dld_Installer_Migration_SCAFull,exe_cmd_Installer_Migration_SCAFull" />
+        <Case order="3" OS="13.0," language="MUL" version="15.7.20033,26.3.22074" customInfoID="FAILED_INCR" actionItemList="dld_Patch_Cumulative,exe_cmd_Patch_Cumulative" />
+        <Case order="4" OS="13.0," language="MUL" version="15.7.20033,26.3.22074" customInfoID="FAILED_CUMU" actionItemList="dld_App_Full,exe_cmd_App_Full" />
+        <Case order="5" OS="13.0," language="MUL" version="26.2.22031" actionItemList="dld_Patch_Incr,exe_cmd_Patch_Incr" iRandom="9000,10000" />
+        <Case order="6" OS="13.0," language="MUL" version="15.7.20033,26.3.22074" actionItemList="dld_Patch_Cumulative,exe_cmd_Patch_Cumulative" iRandom="9000,10000" />
+        <Case order="7" OS="12.0,12.99" language="MUL" version="15.7.20033,26.1.21563" maxRetryCount="10" customInfoID="migration__acrobat_sca_full" actionItemList="dld_Installer_Migration_SCAFull_dropOS12,exe_cmd_Installer_Migration_SCAFull_dropOS12" />
+        <Case order="8" OS="12.0,12.99" language="MUL" version="15.7.20033,26.1.21562" customInfoID="FAILED_CUMU" actionItemList="dld_App_Full_dropOS12,exe_cmd_App_Full_dropOS12" />
+        <Case order="9" OS="12.0,12.99" language="MUL" version="15.7.20033,26.1.21562" actionItemList="dld_Patch_Cumulative_dropOS12,exe_cmd_Patch_Cumulative_dropOS12" />
+        <Case order="10" OS="13.0," language="MUL" version="26.2.22008" actionItemList="dld_Penultimate_Patch_Incr,exe_cmd_Penultimate_Patch_Incr" />
+        <Case order="11" OS="13.0," language="MUL" version="15.7.20033,26.2.22030" actionItemList="dld_Penultimate_Patch_Cumulative,exe_cmd_Penultimate_Patch_Cumulative" />
+    </ActionMatrix>
+    <DownloadActionItems>
+        <dItem id="dld_Patch_Incr" httpURLBase="https://ardownload3.adobe.com" URL="pub/adobe/acrobat/mac/AcrobatDC/2600322075" fileName="AcrobatDCUpd2600322075_incr.pkg" signingEntity="Developer ID Installer: Adobe Inc. (JQ525L2MZD)" hashValue="8aed70c2f85173f745aeff1f657464b61e0895c7fff187c9859afcfa064ddd20" size="419463632" />
+        <dItem id="dld_Patch_Cumulative" httpURLBase="https://ardownload3.adobe.com" URL="pub/adobe/acrobat/mac/AcrobatDC/2600322075" fileName="AcrobatDCUpd2600322075.pkg" signingEntity="Developer ID Installer: Adobe Inc. (JQ525L2MZD)" hashValue="cac4962fa5f7eac0eec137dd4728c3b5b73270c7f3879ae2d5d531d7ad0c21b9" size="1173326297" />
+        <dItem id="dld_App_Full" httpURLBase="https://ardownload3.adobe.com" URL="pub/adobe/acrobat/mac/AcrobatDC/2600322075" fileName="AcrobatDC2600322075_MUI.pkg" signingEntity="Developer ID Installer: Adobe Inc. (JQ525L2MZD)" hashValue="d5eeef2df275570d7e1e1f57dcf1f4c939e579c9993fadb12200ffafca2ba174" size="1707086778" />
+        <dItem id="dld_Installer_Migration_SCAFull" httpURLBase="https://ardownload3.adobe.com" URL="pub/adobe/acrobat/mac/AcrobatDC/2600322075" fileName="AcrobatSCADC2600322075_MUI.pkg" signingEntity="Developer ID Installer: Adobe Inc. (JQ525L2MZD)" hashValue="2b5e7aaf2c02229fe4246d07461d58b49c4e5655611831a2e5ca5d65abcb0f87" size="1708534393" />
+        <dItem id="dld_Patch_Cumulative_dropOS12" httpURLBase="https://ardownload3.adobe.com" URL="pub/adobe/acrobat/mac/AcrobatDC/2600121563" fileName="AcrobatDCUpd2600121563.pkg" signingEntity="Developer ID Installer: Adobe Inc. (JQ525L2MZD)" hashValue="7a6d4de441d74d05bcbb7b2b87f6d9d1ad3793bb281e90e6b089b67a47947ecb" size="1126677835" />
+        <dItem id="dld_App_Full_dropOS12" httpURLBase="https://ardownload3.adobe.com" URL="pub/adobe/acrobat/mac/AcrobatDC/2600121563" fileName="AcrobatDC2600121563_MUI.pkg" signingEntity="Developer ID Installer: Adobe Inc. (JQ525L2MZD)" hashValue="bd70f25d46a61732ea3dff0d1393470cd8538aa77f673b5e59547764abefdb1b" size="1655127549" />
+        <dItem id="dld_Installer_Migration_SCAFull_dropOS12" httpURLBase="https://ardownload3.adobe.com" URL="pub/adobe/acrobat/mac/AcrobatDC/2600121563" fileName="AcrobatSCADC2600121563_MUI.pkg" signingEntity="Developer ID Installer: Adobe Inc. (JQ525L2MZD)" hashValue="6242fa0b52de9de87decc3bede2ffe9f670e2e1d64e41e9bb732824858387dba" size="1665843771" />
+        <dItem id="dld_Penultimate_Patch_Incr" httpURLBase="https://ardownload3.adobe.com" URL="pub/adobe/acrobat/mac/AcrobatDC/2600222031" fileName="AcrobatDCUpd2600222031_incr.pkg" signingEntity="Developer ID Installer: Adobe Inc. (JQ525L2MZD)" hashValue="9adba129a3ce812e92b289e5ff7b56f2e8f722cf37015223a632ebe10b50b65c" size="397483691" />
+        <dItem id="dld_Penultimate_Patch_Cumulative" httpURLBase="https://ardownload3.adobe.com" URL="pub/adobe/acrobat/mac/AcrobatDC/2600222031" fileName="AcrobatDCUpd2600222031.pkg" signingEntity="Developer ID Installer: Adobe Inc. (JQ525L2MZD)" hashValue="5c7711fd933b5af32d754042183ef8c16f4bf060cbe468cf1e46813ace9560ae" size="1173377233" />
+    </DownloadActionItems>
+    <ExecuteActionItems>
+        <eItem id="exe_cmd_Patch_Incr" installCommandArgs="-pkg [dld_Patch_Incr] -target /" />
+        <eItem id="exe_cmd_Patch_Cumulative" installCommandArgs="-pkg [dld_Patch_Cumulative] -target /" />
+        <eItem id="exe_cmd_App_Full" installCommandArgs="-pkg [dld_App_Full] -target /" />
+        <eItem id="exe_cmd_Patch_Cumulative_dropOS12" installCommandArgs="-pkg [dld_Patch_Cumulative_dropOS12] -target /" />
+        <eItem id="exe_cmd_App_Full_dropOS12" installCommandArgs="-pkg [dld_App_Full_dropOS12] -target /" />
+        <eItem id="exe_cmd_Installer_Migration_SCAFull_dropOS12" installCommandArgs="-pkg [dld_Installer_Migration_SCAFull_dropOS12] -target /" />
+        <eItem id="exe_cmd_Installer_Migration_SCAFull" installCommandArgs="-pkg [dld_Installer_Migration_SCAFull] -target /" />
+        <eItem id="exe_cmd_Penultimate_Patch_Incr" installCommandArgs="-pkg [dld_Penultimate_Patch_Incr] -target /" />
+        <eItem id="exe_cmd_Penultimate_Patch_Cumulative" installCommandArgs="-pkg [dld_Penultimate_Patch_Cumulative] -target /" />
+    </ExecuteActionItems>
+</ARMProductManifest>

@@ -1,0 +1,23 @@
+# Example file names in a distribution point's Packages/ folder (names only).
+# Used to check that config regexes and name prefixes behave against the real share.
+AutoMounter_1.8.0.pkg
+BraveBrowser-155.1.97.59.pkg
+BraveBrowser-156.1.98.60.pkg
+DEPNotify_1.1.6.pkg
+ExampleSensorMacOS_7.33.20503.pkg
+ExampleSensorMacOS_7.40.21204.pkg
+Firefox 158.0.1.pkg
+GoogleChrome-156.0.8078.48.pkg
+JamfAutoUpdate-1.5.pkg
+MicrosoftEdge-155.0.4283.62.pkg
+MicrosoftEdge-156.0.4314.42.pkg
+Nudge_Suite-2.1.2.81856.pkg
+Nudge_Suite-2.1.4.81863.pkg
+RemoteUpdateManager_3.1.0.3.pkg
+example-vpn-client-macos-5.1.12.146-core-vpn-webdeploy-k9.pkg
+example-vpn-client-macos-5.1.18.314-core-vpn-webdeploy-k9.pkg
+example-vpn-client-macos-5.1.8.122-core-vpn-webdeploy-k9.pkg
+dialog-3.1.1-5000.pkg
+dockutil-3.1.3.pkg
+eula.rtf.dmg
+utiluti-1.3.pkg
