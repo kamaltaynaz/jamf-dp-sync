@@ -1,95 +1,77 @@
 # jamf-dp-sync
 
-A small unattended agent that runs from cron on a Linux Jamf **file share distribution point** and
-turns it into a **local cache for Mac builds**.
+**Download each app once, on your own server, and let every new Mac install it from the local network.**
 
-Each night it reads the Jamf Pro Patch Management title for each app you list, downloads the
-vendor's signed installer pkg once, verifies it, publishes it into the distribution point's
-`Packages/` folder, and swaps it into the Jamf policy your enrollment workflow calls. New Macs then
-install those apps from the local network instead of each one downloading them from the internet
-during the build.
+[![tests](https://github.com/kamaltaynaz/jamf-dp-sync/actions/workflows/tests.yml/badge.svg)](https://github.com/kamaltaynaz/jamf-dp-sync/actions/workflows/tests.yml)
+[![release](https://img.shields.io/github/v/release/kamaltaynaz/jamf-dp-sync)](https://github.com/kamaltaynaz/jamf-dp-sync/releases)
+![python](https://img.shields.io/badge/python-3.6%2B-blue)
+[![licence](https://img.shields.io/badge/licence-MIT-green)](LICENSE)
 
-It is written in Python 3.6+ using only the standard library, and runs as an ordinary service user.
-It never needs root.
+jamf-dp-sync is a small agent that runs from cron on a Linux Jamf Pro **file share distribution
+point** and turns it into a **local cache for Mac builds**. It keeps the apps your enrollment
+workflow installs current on that server, so they no longer come from the internet during a build.
 
-## Why it exists
+## The problem
+
+If you build several Macs at once, you may have watched it happen: the build is going well, then
+Nudge or swiftDialog fails part-way through, on some Macs and not others.
 
 Many enrollment workflows (for example [Jamf Setup Manager](https://github.com/jamf/setup-manager))
-install apps with [Installomator](https://github.com/Installomator/Installomator) labels. That works
-well for most fleets. Two things go wrong when many Macs are built at the same time behind one public
-IP address:
-
-- **GitHub's API limit.** Some labels ask the GitHub API which release is newest. Anonymous GitHub
-  API calls are limited to 60 requests per hour per public IP. Every Mac behind the same NAT shares
-  that limit, so during a mass build the GitHub-backed labels start failing part-way through.
-- **Repeated large downloads.** Every Mac downloads every installer from the internet, every build.
-  Some are several gigabytes each (Microsoft 365 and Adobe Acrobat, for example).
+install apps with [Installomator](https://github.com/Installomator/Installomator) labels, and some
+labels ask the GitHub API which release is newest. Anonymous GitHub API calls are limited to
+**60 requests per hour per public IP address**. Every Mac behind the same NAT shares that limit, so
+during a mass build the GitHub-backed labels start failing. Meanwhile every Mac downloads every
+installer from the internet, every build, and some are several gigabytes each (Microsoft 365 and
+Adobe Acrobat, for example).
 
 Installomator did nothing wrong here. Downloading the latest version at install time is the right
-design for most fleets, and the rate limit belongs to GitHub. jamf-dp-sync complements Installomator:
-it moves the download for the handful of apps every new Mac needs from "every Mac, at build time" to
-"one server, once a night". It can also draft its configuration from Installomator labels (see
-[`label-import`](docs/installomator-labels.md)).
+design for most fleets, and the rate limit belongs to GitHub. jamf-dp-sync complements it: it moves
+the download for the handful of apps every new Mac needs from "every Mac, at build time" to "one
+server, once a night". It can even draft its configuration from Installomator labels.
 
 ## How it works
 
-For each app, on each run:
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/img/nightly-run-dark.svg">
+  <img src="docs/img/nightly-run-light.svg" alt="The nightly run, per app: check the newest version in Jamf's patch catalogue and stop if the policy already has it; download the vendor's signed pkg once; verify it; publish it to the distribution point; update the Jamf package record, policy and patch title; new Macs then install it from the local network." width="920">
+</picture>
 
-1. Read the target version from the app's Jamf Patch Management title (or a `pin` in the config, or
-   the latest GitHub release for apps with no patch title).
-2. Read the version currently in the app's Jamf policy. If the policy already holds the target, stop:
-   no download, no writes. Most nights every app stops here.
-3. Find the download URL with one of four small resolvers (GitHub release asset, a URL template with
-   the version in it, a "latest" URL that redirects, or Adobe's update manifest).
-4. Download into a staging folder on the same filesystem as `Packages/`. A pkg inside a DMG can be
-   pulled out with 7-Zip, without mounting anything.
-5. Verify: size and SHA-256 where the vendor publishes them, a valid flat pkg, a "Developer ID
-   Installer" signing certificate from the expected Apple Team ID, and the version inside the pkg.
-6. Publish atomically into `Packages/` as `<name_prefix>-<version>.pkg`.
-7. Create the Jamf package record (with a SHA-512 checksum), swap the new pkg into each policy while
-   leaving everything else in the policy as it was, and map the pkg to its version in the patch title.
-8. Prune older copies the agent created, keeping the current one plus one for rollback by default.
-9. Post one summary message to a chat webhook if anything changed or failed.
+Each night, for each app you list, the agent reads the app's Jamf Patch Management title. If the
+Jamf policy already holds that version, it stops: no download, no writes. Most nights every app
+stops there and the whole run takes about a second.
 
-Any failed check stops that app before the distribution point or Jamf is touched; the other apps
-carry on. See [How it works](docs/how-it-works.md) for the detail.
+When there is a new version, it downloads the vendor's signed installer pkg once, verifies it,
+publishes it into the distribution point's `Packages/` folder, and swaps it into the policy your
+enrollment workflow calls, leaving everything else in the policy as it was. It then prunes older
+copies it created, keeping one for rollback, and posts one summary to Google Chat, Slack or
+Microsoft Teams if anything changed or failed.
 
-## Features
+The full sequence is in [How it works](docs/how-it-works.md).
 
-- Jamf Patch Management titles as the version source, with a per-app `pin` for rollback.
-- Resolvers: `github_tag`, `url_template`, `latest_redirect`, `adobe_arm_manifest`, plus a
-  `dmg_extract` post-download step for a pkg inside a DMG.
-- Verification before anything is published; fails closed.
-- Atomic, no-overwrite publish into `Packages/`.
-- Surgical Classic API policy edits: only the matching package entry changes.
-- Package records carry a marker in their notes; only files with the agent's name prefix **and** a
-  marked record are ever pruned. Hand-uploaded packages are never touched.
-- Skip-then-alert when Jamf's catalog announces a version before the vendor serves it.
-- Recovery from interrupted runs (a crash between publishing a file and creating its record, or in
-  the middle of a prune).
-- Notifications to Google Chat, Slack or Microsoft Teams (Workflows): one message per run, nothing
-  on quiet nights, and a Monday heartbeat.
-- `--dry-run` that writes nothing to the distribution point, Jamf or the local cache.
-- `label-import` drafts config entries from Installomator labels.
+## What it checks before anything is published
 
-## Requirements
+Any failed check stops that app before the distribution point or Jamf is touched. The other apps
+carry on.
 
-- A Linux server that hosts a Jamf **file share distribution point** (the agent writes to its
-  `Packages/` folder directly). Tested on RHEL 8-family Linux.
-- Python 3.6 or later. Standard library only: no pip, no virtualenv.
-- `openssl` (used to read the signing certificate).
-- Optional: the official 7-Zip for Linux (`7zz`), pinned to a version and SHA-256 you have checked,
-  only if an app ships its pkg inside a DMG.
-- A Jamf Pro API client with a small role (see [Install](docs/install.md#5-jamf-pro-api-role-and-client)).
-- Outbound HTTPS from the server to Jamf Pro, the vendors' download hosts, GitHub (for GitHub-hosted
-  apps) and your webhook.
+- **Size and SHA-256**, where the vendor publishes them.
+- **A valid flat pkg**: the archive structure and its checksum.
+- **The signing certificate**: a "Developer ID Installer" certificate from the Apple Team ID you
+  expect for that app.
+- **The version inside the pkg**, so a stale or mismatched download is caught.
+
+It also never touches what it didn't create. Only files with the agent's name prefix **and** a
+marked Jamf package record are ever pruned, so hand-uploaded packages are safe.
 
 ## Quick start
 
-1. Follow [docs/install.md](docs/install.md): service user, write access to `Packages/`, staging
-   folder, code, secrets, config, Jamf API client and one policy per app.
-2. Describe your apps in `packages.json` ([docs/configuration.md](docs/configuration.md)), or draft
-   entries from Installomator labels ([docs/installomator-labels.md](docs/installomator-labels.md)).
+You need a Linux server hosting a Jamf file share distribution point, Python 3.6 or later
+(standard library only: no pip, no virtualenv) and `openssl`. The agent runs as an ordinary service
+user and never needs root.
+
+1. Follow [the install guide](docs/install.md): service user, write access to `Packages/`, staging
+   folder, code, secrets, config, a Jamf API client and one policy per app.
+2. Describe your apps in `packages.json` ([configuration](docs/configuration.md)), or draft the
+   entries from [Installomator labels](docs/installomator-labels.md).
 3. Check and try it, as the service user:
 
    ```
@@ -100,99 +82,44 @@ carry on. See [How it works](docs/how-it-works.md) for the detail.
    ```
 
 4. Add the daily cron line, then point your enrollment workflow at the policies
-   ([docs/setup-manager.md](docs/setup-manager.md)).
+   ([Setup Manager and other workflows](docs/setup-manager.md)).
 
-## Commands
-
-In the docs, `jamf-dp-sync` is short for `python3 /opt/jamf-dp-sync/jamf_dp_sync.py` (or
-`python3 -m jamf_dp_sync` from the code folder).
-
-```
-jamf-dp-sync [--config PATH] run [--only LABEL ...] [--dry-run] [--no-prune] [-v]
-jamf-dp-sync [--config PATH] check-config
-jamf-dp-sync [--config PATH] status [--only LABEL ...]
-jamf-dp-sync [--config PATH] notify-test
-jamf-dp-sync label-import --installomator PATH LABEL [LABEL ...]
-```
-
-| Command | What it does |
-| --- | --- |
-| `run` | Sync every app (or only the labels given). Exit 0 when no app failed, 1 when any app failed or preflight failed. A second run while one is already running exits 0. |
-| `run --dry-run` | Resolve, download and verify, then print what would change. Writes nothing to `Packages/`, Jamf or the state cache, and sends no notification. |
-| `run --no-prune` | Skip pruning for this run. |
-| `check-config` | Validate `packages.json` and the secrets file. Does not contact Jamf. |
-| `status` | Per app: version in the policy, latest patch title version, last result. Read-only. |
-| `notify-test` | Post a test message to the configured webhook. |
-| `label-import` | Print draft `packages.json` entries for Installomator labels. Needs no secrets or config. |
-
-`--config` defaults to `~/.config/jamf-dp-sync/packages.json`.
-
-## Compatibility
-
-- **Jamf Pro on-premises:** tested in production.
-- **Jamf Cloud:** expected to work, not yet tested; reports welcome. Nothing in the agent assumes an
-  on-premises server: it uses only the Jamf Pro API and Classic API over HTTPS with an OAuth API
-  client. Jamf Pro supports file share distribution points alongside the Jamf Cloud distribution
-  point, chosen per network segment, so a cloud-hosted Jamf Pro with an on-site Linux file share
-  distribution point is the same design.
-
-  **Limitation:** the packages exist only on the local file share distribution point. A Mac whose
-  network segment points at the cloud distribution point will not find them, and the policy will
-  fail for that Mac. The cache is for on-site builds: make sure build Macs are on a network segment
-  that uses the local distribution point. Uploading to the cloud distribution point as well is a
-  possible future option.
+A dry run resolves, downloads and verifies, then prints what would change. It writes nothing to
+`Packages/`, Jamf or the local cache.
 
 ## Known limits
 
-- **The signature check reads certificate fields; it is not cryptographic.** The agent takes the
-  leaf certificate from the pkg's xar table of contents and uses `openssl` to check that it is a
-  "Developer ID Installer" certificate whose subject OU equals the app's expected Team ID. That
-  catches a wrong or unexpected vendor pkg, but it does **not** verify the table of contents
-  signature or the chain to Apple's root the way `pkgutil --check-signature` does on macOS: a forged
-  self-signed certificate with the same fields would pass. Authenticity comes from HTTPS to the
-  vendor's own host plus the vendor's SHA-256 and size where the source publishes them (GitHub
-  release asset digests, Adobe's manifest). For sources that publish no hash (`latest_redirect`,
-  `url_template`), it rests on HTTPS alone; the certificate fields and version check guard against
-  mistakes, not attacks. macOS's installer still checks the real signature when a Mac installs the pkg.
-- **Policy edits are last-writer-wins.** The Classic API has no conditional update. The agent re-reads
-  each policy just before it writes (keeping any edit made since it planned) and reads it back just
-  after, warning in the run summary if the package list changed around the update. An admin edit made
-  in the instant between that re-read and the write can still be lost; schedule runs for a quiet hour.
-- **Signed vendor pkgs only.** The agent publishes a pkg the vendor built and signed, either directly
-  or inside a DMG. It never repackages an `.app` bundle from a DMG or ZIP.
+Stated plainly, so you can decide whether it fits. The detail for each is in
+[Known limits and compatibility](docs/known-limits.md).
+
+- **The signature check reads certificate fields; it is not cryptographic.** It catches a wrong or
+  unexpected vendor pkg, but it does not verify the signature chain to Apple's root the way
+  `pkgutil --check-signature` does on macOS. macOS's installer still checks the real signature when
+  a Mac installs the pkg.
+- **Policy edits are last-writer-wins.** Jamf's Classic API has no conditional update. The agent
+  re-reads each policy just before writing and reads it back just after, and warns if something
+  changed, but an admin edit made in that instant can still be lost. Schedule runs for a quiet hour.
+- **Signed vendor pkgs only**, directly or inside a DMG. It never repackages an `.app` bundle.
 - **Some DMGs cannot be opened on Linux.** 7-Zip cannot read every APFS disk image; a dry run tells you.
-- **Local distribution point only** (see Compatibility).
-- **Monitor mode is not finished.** `monitor` entries are validated and `status` reports their
-  policy and patch title versions, but `run` skips them and sends no alerts yet.
-- **The Adobe `.arm` manifest** is accepted on HTTPS plus the certificate-field check of its xar
-  wrapper; any other signature around it is not verified.
-
-## How it compares
-
-jamf-dp-sync does one narrow job. The tools below do far more; this is about fit, not merit.
-
-| | jamf-dp-sync | Installomator | AutoPkg / AutoPkgr | Munki |
-| --- | --- | --- | --- | --- |
-| Where it runs | Linux server hosting the file share DP | On each Mac, at install time | A Mac (AutoPkgr is a GUI for AutoPkg) | Client agent on each Mac plus a web repo |
-| Download | Once per version, on the server | Every Mac, every install | Once, on the AutoPkg Mac | Once into the repo; Macs fetch from the repo |
-| What it handles | Signed vendor pkgs (pkg, pkg in a DMG) | Hundreds of labels: pkg, dmg, zip, app bundles | Thousands of community recipes; can build pkgs from apps | Full software management, updates, self service |
-| Version source | Jamf Patch Management titles | The vendor's latest | Recipes | Your repo catalogs |
-| Setup | Service user, ACL, config file, cron | A script or a Setup Manager action | A Mac, recipes, overrides, uploader setup | Server repo, client install, manifests |
-
-Choose AutoPkg or Munki when you need broad app coverage, repackaging or ongoing patching. Choose
-jamf-dp-sync when you already have a Linux file share distribution point and want the few apps your
-builds install to come from it, kept current automatically.
+- **Local distribution point only.** Jamf Pro on-premises is tested in production. Jamf Cloud with
+  an on-site file share distribution point is expected to work but not yet tested; reports welcome.
 
 ## Documentation
 
-- [Install](docs/install.md)
-- [Configuration reference](docs/configuration.md)
-- [How it works](docs/how-it-works.md)
-- [Using Installomator labels](docs/installomator-labels.md)
-- [Notifications](docs/notifications.md)
-- [Jamf Setup Manager and other workflows](docs/setup-manager.md)
-- [Testing](docs/testing.md)
-- [References in code comments](docs/code-references.md) (spec sections and review findings)
+| | |
+| --- | --- |
+| [Install](docs/install.md) | Server setup, Jamf API role, first run and cron |
+| [Configuration](docs/configuration.md) | Every `packages.json` setting |
+| [Commands](docs/commands.md) | `run`, `status`, `check-config`, `notify-test`, `label-import` |
+| [How it works](docs/how-it-works.md) | The run in detail, verification and recovery |
+| [Features and requirements](docs/features.md) | The full list |
+| [Installomator labels](docs/installomator-labels.md) | Drafting config entries with `label-import` |
+| [Notifications](docs/notifications.md) | Google Chat, Slack and Microsoft Teams |
+| [Setup Manager and other workflows](docs/setup-manager.md) | Pointing your enrollment at the policies |
+| [Known limits and compatibility](docs/known-limits.md) | The limits above, in full |
+| [How it compares](docs/comparison.md) | Installomator, AutoPkg and Munki |
+| [Testing](docs/testing.md) | Running the test suite |
+| [Code references](docs/code-references.md) | Spec sections and review findings cited in comments |
 
 ## Credits
 
